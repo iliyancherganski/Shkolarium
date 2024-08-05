@@ -1,0 +1,44 @@
+﻿@using StudentEducationCenter.Data.Enums;
+@using StudentEducationCenter.Data.Models;
+@using System.Globalization;
+@model List<Course>
+
+<h2>Списък с курсове</h2>
+<form method="post" asp-action="Requests" asp-controller="Course">
+    <div class="card-deck">
+
+        @foreach (var course in Model)
+        {
+            <div class="card border-light mb-3" style="width: 18rem; margin-bottom: 20px;">
+                <div class="card-body">
+                    <div>
+                        <h5 class="card-header">@course.CourseType.Name</h5>
+                    </div>
+                    <div>
+                        <p class="card-title">@course.StartDate.ToString("MMMM dd, yyyy", new CultureInfo("bg-BG")) - @course.EndDate.ToString("MMMM dd, yyyy", new CultureInfo("bg-BG"))</p>
+                        <p class="card-title">@course.AgeGroup.Name</p>
+                        <h5 class="card-title">Деца за записване:</h5>
+                    </div>
+                    <div>
+                        @foreach (var request in course.CourseRequests)
+                        {
+                            <hr />
+                            <div>
+                                <p class="card-title">Дете: <strong>@request.Child.FirstName @request.Child.LastName</strong></p>
+                                <p class="card-title">Родител: @request.Child.Parent.User.FirstName @request.Child.Parent.User.LastName</p>
+                            </div>
+                            <div class="card-buttons">
+                                <a asp-controller="Child" asp-action="Info" asp-route-childId="@request.Child.Id" class="btn btn-outline-info">Информация за детето</a>
+
+                                <button type="submit" asp-route-requestId="@request.Id" asp-route-status="@RequestStatus.Accepted" class="btn btn-outline-success">Приемане на заявката</button>
+                                <button type="submit" asp-route-requestId="@request.Id" asp-route-status="@RequestStatus.Rejected" class="btn btn-outline-danger">Отхвърляне на заявката</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+    <a asp-controller="Course" asp-action="Index" class="btn btn-primary">Всички курсове</a>
+</form>

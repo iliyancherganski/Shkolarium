@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using StudentEducationCenter.Data.Models;
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<ul class="navbar-nav">
+	@if (SignInManager.IsSignedIn(User))
+	{
+		if (User.IsInRole("Admin"))
+		{
+			<li class="nav-item">
+				<a class="nav-link" asp-controller="User" asp-action="RegisterStaff">Регистрация на служители</a>
+			</li>
+		}
+		<li class="nav-item">
+			@if (!User.IsInRole("Admin"))
+			{
+				<form class="form-inline" asp-controller="User" asp-action="DirectEdit">
+					<button type="submit" class="nav-link btn btn-link" title="Редактиране на акаунт">Здравейте, @User.Identity?.Name</button>
+				</form>
+				@* <a class="nav-link" asp-controller="User" asp-action="Delete" title="Редактиране на акаунт">Здравейте, @User.Identity?.Name</a> *@
+			}
+			else
+			{
+				<a class="nav-link">Здравейте, администратор!</a>
+			}
+		</li>
+		<li class="nav-item">
+			<form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+				<button type="submit" class="nav-link btn btn-link">Излизане</button>
+			</form>
+		</li>
+	}
+	else
+	{
+		<li class="nav-item">
+			<a class="nav-link" asp-controller="User" asp-action="Register">Регистрация</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" asp-controller="User" asp-action="Login">Вход</a>
+		</li>
+	}
+</ul>

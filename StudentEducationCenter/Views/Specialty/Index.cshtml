@@ -1,0 +1,135 @@
+﻿@using StudentEducationCenter.Data.Models;
+@model List<Specialty>
+
+<h2>Списък със специалности</h2>
+<div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+<nav class="navbar navbar-expand-lg bg-light" data-bs-theme="light" style="--bs-bg-opacity:0; padding:0;">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarColor01" style="margin-bottom:20px">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item" style="margin:0">
+                    <a class="nav-link"><strong>Сортирай по:</strong></a>
+                </li>
+                <li class="nav-item" style="margin:0">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        @if (ViewBag.SortByName != null)
+                        {
+                            if (ViewBag.SortByName == true)
+                            {
+                                <a asp-controller="Specialty" asp-action="Index" asp-route-sortByName="@false" class="btn btn-dark">Име (по азбучен ред)</a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Specialty" asp-action="Index" asp-route-sortByName="@true" class="btn btn-dark">Име (обратно на азбучен ред)</a>
+                            }
+                        }
+                        else
+                        {
+                            <a asp-controller="Specialty" asp-action="Index" asp-route-sortByName="@true" class="btn btn-outline-dark">Име</a>
+                        }
+
+                    </div>
+                </li>
+            </ul>
+            @{
+                string? searchInput = ViewBag.SearchInput;
+                if (string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = "";
+                }
+                <form id="searchForm" class="d-flex" action="Index" method="get">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item" style="margin:0; margin-left:5px">
+                            <input id="searchInput" name="searchInput" class="form-control me-sm-2" type="search" placeholder="Търсене по специалност..." value="@searchInput">
+                        </li>
+                        <li class="nav-item" style="margin:0; margin-left:5px">
+                            <button id="searchButton" type="submit" asp-action="Index" asp-controller="Specialty" class="btn btn-light">Търси</button>
+                        </li>
+                        <li class="nav-item" style="margin:0; margin-left:5px">
+                            <a asp-controller="Specialty" asp-action="Index" class="btn btn-outline-danger">Премахни филтри</a>
+                        </li>
+                    </ul>
+                </form>
+            }
+        </div>
+    </div>
+</nav>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Име на специалност</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var specialty in Model)
+        {
+            <tr>
+                <td>@specialty.Name</td>
+                <td>
+                    @* <form asp-action="Delete" asp-route-id="@specialty.Id" method="post">
+                        <button type="submit" class="btn btn-danger">Изтрий</button>
+                    </form> *@
+                    <a href="#" onclick="confirmDelete('@specialty.Name', '@specialty.Id')" class="btn btn-danger">Изтриване</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <ul class="pagination">
+        @for (int i = 1; i <= ViewBag.PageCount; i++)
+        {
+            if (ViewBag.Page == i)
+            {
+                <li class="page-item active">
+                    @if (ViewBag.SortByName != null)
+                    {
+                        <a asp-controller="Specialty" asp-action="Index" asp-route-page="@i" asp-route-sortByName="@ViewBag.SortByName" class="page-link">@i</a>
+                    }
+                    else if (ViewBag.SearchInput != null)
+                    {
+                        <a asp-controller="Specialty" asp-action="Index" asp-route-page="@i" asp-route-searchInput="@ViewBag.SearchInput" class="page-link">@i</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Specialty" asp-action="Index" asp-route-page="@i" class="page-link">@i</a>
+                    }
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    @if (ViewBag.SortByName != null)
+                    {
+                        <a asp-controller="Specialty" asp-action="Index" asp-route-page="@i" asp-route-sortByName="@ViewBag.SortByName" class="page-link">@i</a>
+                    }
+                    else if (ViewBag.SearchInput != null)
+                    {
+                        <a asp-controller="Specialty" asp-action="Index" asp-route-page="@i" asp-route-searchInput="@ViewBag.SearchInput" class="page-link">@i</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Specialty" asp-action="Index" asp-route-page="@i" class="page-link">@i</a>
+                    }
+                </li>
+            }
+        }
+    </ul>
+</div>
+
+<div class="text-center">
+    <a asp-action="Add" class="btn btn-primary">Добави нова специалност</a>
+</div>
+
+@section Scripts{
+    <script>
+        function confirmDelete(specialtyName, specialtyId) {
+            var result = confirm("Сигурни ли сте, че искате да изтриете специалността " + specialtyName + "?");
+            if (result) {
+                window.location.href = '/Specialty/Delete?id=' + specialtyId;
+            }
+        }
+    </script>
+}

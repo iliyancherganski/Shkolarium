@@ -1,0 +1,210 @@
+﻿@using StudentEducationCenter.Data.Enums;
+@using StudentEducationCenter.Data.Models;
+@model List<Child>
+
+@{
+    if (User.IsInRole("Admin"))
+    {
+        <h2>Всички деца</h2>
+    }
+    else if (User.IsInRole("Parent"))
+    {
+        <h2>Вашите деца</h2>
+    }
+}
+
+@if (ViewBag.Message != null)
+{
+    <p style="color: limegreen"><strong>@ViewBag.Message</strong></p>
+}
+<nav class="navbar navbar-expand-lg bg-light" data-bs-theme="light" style="--bs-bg-opacity:0; padding:0;">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item" style="margin:0">
+                    <a class="nav-link"><strong>Сортирай по:</strong></a>
+                </li>
+                <li class="nav-item" style="margin:0">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        @if (ViewBag.SortByName != null)
+                        {
+                            if (ViewBag.SortByName == true)
+                            {
+                                <a asp-controller="Child" asp-action="Index" asp-route-sortByName="@false" class="btn btn-dark">Име (фамилия, собствено име)</a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Child" asp-action="Index" asp-route-sortByName="@true" class="btn btn-dark">Име (собствено име, фамилия)</a>
+                            }
+                        }
+                        else
+                        {
+                            <a asp-controller="Child" asp-action="Index" asp-route-sortByName="@true" class="btn btn-outline-dark">Име</a>
+                        }
+
+                    </div>
+                </li>
+            </ul>
+            @{
+                string? searchInput = ViewBag.SearchInput;
+                if (string.IsNullOrEmpty(searchInput))
+                {
+                    searchInput = "";
+                }
+                <form id="searchForm" class="d-flex" style="margin-right:80px" action="Index" method="get">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item" style="margin:0">
+                            <input id="searchInput" name="searchInput" class="form-control me-sm-2" type="search" placeholder="Търсене име, родител, телефон..." value="@searchInput">
+                        </li>
+                        <li class="nav-item" style="margin:0">
+                            <button id="searchButton" type="submit" asp-action="Index" asp-controller="Child" class="btn btn-light">Търси</button>
+                        </li>
+                    </ul>
+                </form>
+            }
+        </div>
+    </div>
+</nav>
+<nav class="navbar navbar-expand-lg bg-light" data-bs-theme="light" style="--bs-bg-opacity:0;">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item" style="margin:0">
+                    <a class="nav-link"><strong>Филтрирай по:</strong></a>
+                </li>
+                <li class="nav-item dropdown" style="margin:0">
+                    @if (ViewBag.CityId != 0)
+                    {
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><strong>Градове</strong></a>
+                    }
+                    else
+                    {
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Градове</a>
+                    }
+                    <div class="dropdown-menu" style="">
+                        <h6 class="dropdown-header">Избери град</h6>
+                        @foreach (var city in ViewBag.Cities)
+                        {
+                            int index = int.Parse(city.Value);
+                            if (ViewBag.CityId == index)
+                            {
+                                <a asp-controller="Child" asp-action="Index" asp-route-cityId="@index" class="dropdown-item"><strong>@city.Text</strong></a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Child" asp-action="Index" asp-route-cityId="@index" class="dropdown-item">@city.Text</a>
+                            }
+                        }
+                    </div>
+                </li>
+            </ul>
+            <div class="d-flex" style="margin-right:80px">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item" style="margin:0">
+                        <a asp-controller="Child" asp-action="Index" class="btn btn-outline-danger">Премахни филтри</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="card-deck">
+    @foreach (var child in Model)
+    {
+        <div class="card border-light mb-3" style="width: 18rem; margin-bottom: 20px;">
+            <div class="card-body">
+                <div>
+                    <h5 class="card-header">@child.FirstName @child.LastName</h5>
+                </div>
+                <div>
+                    <p class="card-title">Активно регистрирано на: @child.CourseRequests.Where(x=>x.Status == RequestStatus.Accepted).Count() курса</p>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <p class="card-title">Тел. за връзка: @child.PhoneNumber</p>
+                        <p class="card-title">Родител: @child.Parent.User.FirstName @child.Parent.User.LastName</p>
+                        <p class="card-title">Тел. за връзка: @child.Parent.User.PhoneNumber</p>
+                    }
+                </div>
+                <div class="card-buttons">
+                    <a asp-controller="Child" asp-action="Info" asp-route-childId="@child.Id" class="btn btn-outline-info">Информация</a>
+                    <a asp-controller="Child" asp-action="SignInToCourse" asp-route-childId="@child.Id" class="btn btn-success">Записване на курс</a>
+                    <a asp-controller="Child" asp-action="Edit" asp-route-childId="@child.Id" class="btn btn-warning">Редактиране</a>
+                    <a href="#" onclick="confirmDelete('@child.FirstName', '@child.LastName', '@child.Id')" class="btn btn-danger">Изтриване</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div>
+    <ul class="pagination">
+        @for (int i = 1; i <= ViewBag.PageCount; i++)
+        {
+            if (ViewBag.Page == i)
+            {
+                <li class="page-item active">
+                    @{
+                        if (ViewBag.SortByName != null)
+                        {
+                            <a asp-controller="Child" asp-action="Index" asp-route-page="@i" asp-route-sortByName="@ViewBag.SortByName" class="page-link">@i</a>
+                        }
+                        else if (ViewBag.CityId != 0)
+                        {
+                            <a asp-controller="Child" asp-action="Index" asp-route-page="@i" asp-route-cityId="@ViewBag.CityId" class="page-link">@i</a>
+                        }
+                        else if (ViewBag.SearchInput != null)
+                        {
+                            <a asp-controller="Child" asp-action="Index" asp-route-page="@i" asp-route-searchInput="@ViewBag.SearchInput" class="page-link">@i</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Child" asp-action="Index" asp-route-page="@i" class="page-link">@i</a>
+                        }
+                    }
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    @{
+                        if (ViewBag.SortByName != null)
+                        {
+                            <a asp-controller="Child" asp-action="Index" asp-route-page="@i" asp-route-sortByName="@ViewBag.SortByName" class="page-link">@i</a>
+                        }
+                        else if (ViewBag.CityId != 0)
+                        {
+                            <a asp-controller="Child" asp-action="Index" asp-route-page="@i" asp-route-cityId="@ViewBag.CityId" class="page-link">@i</a>
+                        }
+                        else if (ViewBag.SearchInput != null)
+                        {
+                            <a asp-controller="Child" asp-action="Index" asp-route-page="@i" asp-route-searchInput="@ViewBag.SearchInput" class="page-link">@i</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Child" asp-action="Index" asp-route-page="@i" class="page-link">@i</a>
+                        }
+                    }
+                </li>
+            }
+        }
+    </ul>
+</div>
+
+@if (User.IsInRole("Parent"))
+{
+    <a asp-controller="Child" asp-action="Add" class="btn btn-primary">Регистация на дете</a>
+}
+@section Scripts{
+    <script>
+        function confirmDelete(firstName, lastName, childId) {
+            // Display a confirmation dialog
+            var result = confirm("Сигурни ли сте, че искате да изтриете всички данни на детето " + firstName + " " + lastName + "?");
+
+            // If the user clicks "OK," proceed with the deletion
+            if (result) {
+                // Redirect to the Delete action with the childId
+                window.location.href = '/Child/Delete?childId=' + childId;
+            }
+        }
+    </script>
+}

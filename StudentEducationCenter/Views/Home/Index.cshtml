@@ -1,0 +1,25 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using StudentEducationCenter.Data.Models;
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@{
+    ViewData["Title"] = "Начало";
+}
+
+<div class="text-center" style="margin-top: 100px">
+    <h1 class="display-4">Добре дошли в Школариум!</h1>
+    <p>В този сайт можете да регистрирате своите деца на различни школи.</p>
+</div>
+
+@if (!SignInManager.IsSignedIn(User))
+{
+    <div class="text-center" style="margin-top: 100px">
+        <p>
+            <strong>Можете да влезете в сайта от тук: <a asp-controller="User" asp-action="Login" class="btn btn-primary">Вход</a></strong>
+        </p>
+        <p><strong>Нямате регистрация? Регистрирайте се от тук:  <a asp-controller="User" asp-action="Register" class="btn btn-primary">Регистация</a></strong></p>
+    </div>
+}
+<div class="text-center" style="margin-top: 50px">
+    <a asp-controller="Course" asp-action="Index" class="btn btn-outline-primary">Разгледайте всички курсове!</a>
+</div> 

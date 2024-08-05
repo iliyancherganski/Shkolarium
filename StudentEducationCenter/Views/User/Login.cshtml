@@ -1,0 +1,27 @@
+﻿@using StudentEducationCenter.ViewModels.User;
+@model LoginViewModel
+
+<h1>Влизане</h1>
+
+<form method="post" asp-action="Login" asp-controller="User" class="d-flex justify-content-center align-items-center flex-column">
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+    <div class="form-group" style="width:400px">
+        <label asp-for="Email">Имейл</label>
+        <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:400px">
+        <label asp-for="Password">Парола</label>
+        <input asp-for="Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Password123!" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="checkbox mb-3" style="width:400px">
+        <label asp-for="RememberMe" class="form-label">
+            <input class="form-check-input" asp-for="RememberMe" />
+            @Html.DisplayNameFor(m => m.RememberMe)
+        </label>
+    </div>
+    <button type="submit" class="btn btn-lg btn-primary" style="width:300px; margin-top:30px;">Влизане</button>
+</form>

@@ -1,0 +1,54 @@
+﻿@using StudentEducationCenter.ViewModels.Child;
+@using System.Globalization;
+@model RegisterChildForCourseViewModel
+
+@if (User.IsInRole("Parent")
+|| User.IsInRole("Admin"))
+{
+    <form method="post" asp-action="SignInToCourse" asp-controller="Child">
+        <h2>Дете: @Model.ChildName</h2>
+        <div class="card-deck">
+            @foreach (var course in Model.Courses.Where(x => x.EndDate > DateTime.Now))
+            {
+                <div class="card border-light mb-3" style="width: 18rem; margin-bottom: 20px;">
+                    <div class="card-body">
+                        <div>
+                            <h5 class="card-header">@course.CourseType.Name</h5>
+                        </div>
+                        <div>
+                            <p class="card-title">@course.StartDate.ToString("MMMM dd, yyyy", new CultureInfo("bg-BG")) - @course.EndDate.ToString("MMMM dd, yyyy", new CultureInfo("bg-BG"))</p>
+                            <p class="card-title">@course.AgeGroup.Name</p>
+                            @if (course.TeachersCourse != null)
+                            {
+                                <p class="card-text">Учители: <strong>@($"{string.Join(", ", course.TeachersCourse.Select(x => $"{x.Teacher.User.FirstName} {x.Teacher.User.LastName}"))}")</strong></p>
+                            }
+                            <p class="card-title">Цена: @string.Format("{0:f2} лв.",course.Price)</p>
+                            @{
+                                string dateString = $"{course.StartDate.ToString("MMMM dd, yyyy", new CultureInfo("bg-BG"))} - {course.EndDate.ToString("MMMM dd, yyyy", new CultureInfo("bg-BG"))}";
+                                if (course.StartDate > DateTime.Now)
+                                {
+                                    <p class="card-title">@dateString: <strong style="color: orange">Не е започнал</strong></p>
+                                }
+                                else if (course.StartDate < DateTime.Now && course.EndDate > DateTime.Now)
+                                {
+                                    <p class="card-title">@dateString: <strong style="color: green">Започнал</strong></p>
+                                }
+                            }
+                        </div>
+
+                        <div>
+                            <input type="hidden" asp-for="ChildId" value="@Model.ChildId" />
+                            <input type="hidden" asp-for="ChildName" value="@Model.ChildName" />
+
+                            <div class="card-buttons">
+                                <button type="submit" asp-route-courseId="@course.Id" class="btn btn-outline-success">Записване на този курс</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </form>
+    <a asp-controller="Child" asp-action="Index" class="btn btn-primary">Деца</a>
+
+}

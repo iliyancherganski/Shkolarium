@@ -1,0 +1,13 @@
+﻿@using StudentEducationCenter.ViewModels.Additional;
+@model CourseTypeViewModel
+
+<h2>Добавяне на тип курс</h2>
+
+<form method="post" asp-action="Add">
+    <div class="form-group" style="width:500px">
+        <label asp-for="CourseTypeName">Тип курс</label>
+        <input asp-for="CourseTypeName" class="form-control" />
+        <span asp-validation-for="CourseTypeName" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-lg btn-primary" style="width:400px; margin-top:30px;">Добави тип курс</button>
+</form>

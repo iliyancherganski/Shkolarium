@@ -1,0 +1,72 @@
+﻿@using StudentEducationCenter.ViewModels.Course;
+@model AddCourseViewModel
+
+<h1>Създаване на нов курс</h1>
+
+
+<form method="post" class="d-flex justify-content-center align-items-center flex-column" id="registerForm">
+
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="form-group" style="width:500px">
+            <label asp-for="EmployeeId">Задаване на отговорен служител</label>
+            <select asp-for="EmployeeId" asp-items="@(ViewBag.Employees)" class="form-select" placeholder="Избери отговорен служител">
+            </select>
+            <span asp-validation-for="EmployeeId"></span>
+        </div>
+    }
+    else
+    {
+        <input type="hidden" asp-for="EmployeeId" value="@Model.EmployeeId" />
+    }
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="CourseTypeId">Тип курс</label>
+        <select asp-for="CourseTypeId" asp-items="@(ViewBag.CourseTypes)" class="form-select" placeholder="Избери тип курс">
+        </select>
+        <span asp-validation-for="CourseTypeId"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="AgeGroupId">Възрастова група</label>
+        <select asp-for="AgeGroupId" asp-items="@(ViewBag.AgeGroups)" class="form-select" placeholder="Избери възрастова група">
+        </select>
+        <span asp-validation-for="AgeGroupId"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="StartDate">Дата на започване</label>
+        <input asp-for="StartDate" type="date" value="2022-01-01" min="2021-12-31" class="form-control" autocomplete="username" aria-required="true" placeholder="10/01/2024" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="EndDate">Дата на свършване</label>
+        <input asp-for="EndDate" type="date" value="2022-01-01" min="2021-12-31" class="form-control" autocomplete="username" aria-required="true" placeholder="15/01/2024" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="Price">Цена</label>
+        <input asp-for="Price" class="form-control" autocomplete="username" aria-required="true" placeholder="Ivanov" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label>Учители</label>
+        <div id="dynamicField" class="form-group" style="width:500px">
+            @foreach (var teacher in ViewBag.Teachers)
+            {
+                bool isChecked = Model.TeacherIds.Contains(teacher.TeacherId);
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="@teacher.TeacherId" name="TeacherIds" value="@teacher.TeacherId" @(isChecked ? "checked" : "")>
+                    <label class="form-check-label" for="teacher-@teacher.TeacherId">@teacher.TeacherName</label>
+                </div>
+            }
+            <span asp-validation-for="TeacherIds" class="text-danger"></span>
+        </div>
+    </div>
+    <button id="registerSubmit" type="submit" class="btn btn-lg btn-primary" style="width:400px; margin-top:30px;">Създаване на курс</button>
+</form>

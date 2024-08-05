@@ -1,0 +1,65 @@
+﻿@using StudentEducationCenter.ViewModels.User;
+@model RegisterViewModel
+
+<h1>Регистриране като родител</h1>
+
+<form class="d-flex justify-content-center align-items-center flex-column" method="post" asp-action="Register" asp-controller="User">
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+    <h2>Създаване на акаунт</h2>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="FirstName">Собствено име</label>
+        <input asp-for="FirstName" class="form-control" autocomplete="username" aria-required="true" placeholder="Иван" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="MiddleName">Бащино име</label>
+        <input asp-for="MiddleName" class="form-control" autocomplete="username" aria-required="true" placeholder="Петров" />
+        <span asp-validation-for="MiddleName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="LastName">Фамилия</label>
+        <input asp-for="LastName" class="form-control" autocomplete="username" aria-required="true" placeholder="Иванов" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="CityId">Град</label>
+        <select asp-for="CityId" asp-items="@(ViewBag.Cities)" class="form-select" placeholder="Изберете град">
+        </select>
+        <span asp-validation-for="CityId"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="Address">Адрес</label>
+        <input asp-for="Address" class="form-control" autocomplete="username" aria-required="true" placeholder="ул. 'Христо Ботев 10А" />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="PhoneNumber">Тел. за връзка</label>
+        <input asp-for="PhoneNumber" class="form-control" autocomplete="username" aria-required="true" placeholder="08XXXXXXXX" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="Email">Имейл</label>
+        <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="Password">Парола</label>
+        <input asp-for="Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Password123!" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="ConfirmPassword">Потвърди парола</label>
+        <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Password123!" />
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-lg btn-primary" style="width:400px; margin-top:30px;">Регистриране</button>
+</form>

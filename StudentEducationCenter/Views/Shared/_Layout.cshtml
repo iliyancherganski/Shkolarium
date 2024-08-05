@@ -1,0 +1,143 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using StudentEducationCenter.Data.Models;
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] Школариум</title>
+    <link href="~/icon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/StudentEducationCenter.styles.css" asp-append-version="true" />
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg sticky-top bg-dark" data-bs-theme="dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Школариум</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse" id="navbarColor02">
+                    <ul class="navbar-nav me-auto">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            if (User.IsInRole("Admin")
+                            || User.IsInRole("Employee"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Още
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" asp-area="" asp-controller="Specialty" asp-action="Index">Специалности</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="AgeGroup" asp-action="Index">Възрастови групи</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="City" asp-action="Index">Градове</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="CourseType" asp-action="Index">Типове курс</a>
+                                        <!-- Add more pages as needed -->
+                                    </div>
+                                </li>
+
+                            }
+                        }
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Курсове
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" asp-area="" asp-controller="Course" asp-action="Index">Всички курсове</a>
+                                @if (User.IsInRole("Teacher") || User.IsInRole("Employee"))
+                                {
+                                    <a class="dropdown-item" asp-controller="Course" asp-action="MyCourses">Моите курсове</a>
+                                }
+
+                                @if (User.IsInRole("Admin")
+                                || User.IsInRole("Employee"))
+                                {
+                                    <a class="dropdown-item" asp-area="" asp-controller="Course" asp-action="Add">Нов курс</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Course" asp-action="Requests">Заявки за записване на курс</a>
+                                }
+
+                            </div>
+                        </li>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+
+                            if (User.IsInRole("Parent")
+                            || User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Деца
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        @{
+                                            string courseLabel = "Всички деца";
+                                            if (User.IsInRole("Parent"))
+                                            {
+                                                courseLabel = "Моите деца";
+                                            }
+                                            <a class="dropdown-item" asp-controller="Child" asp-action="Index">@courseLabel</a>
+                                        }
+                                        <a class="dropdown-item" asp-controller="Child" asp-action="Add">Регистриране на дете</a>
+                                    </div>
+                                </li>
+                            }
+                            if (User.IsInRole("Admin")
+                            || User.IsInRole("Employee")
+                            || User.IsInRole("Teacher"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Parent" asp-action="Index">Родители</a>
+                                </li>
+                            }
+                            if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Employee" asp-action="Index">Служители</a>
+                                </li>
+                            }
+                            if (User.IsInRole("Admin")
+                            || User.IsInRole("Employee")
+                            || User.IsInRole("Parent")
+                            || User.IsInRole("Teacher"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Teacher" asp-action="Index">Учители</a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                    @* <form class="d-flex"> *@
+                    <partial name="_LoginPartial" />
+                    @* <input class="form-control me-sm-2" type="search" placeholder="Search">
+                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                    </form> *@
+                </div>
+            </div>
+        </nav>
+
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    @* <footer class="border-top footer text-muted">
+    <div class="container">
+    &copy; 2024 - StudentEducationCenter - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </div>
+    </footer> *@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

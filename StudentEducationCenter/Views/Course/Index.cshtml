@@ -1,0 +1,238 @@
+﻿@using StudentEducationCenter.Data.Enums;
+@using StudentEducationCenter.Data.Models;
+@using System.Globalization;
+
+@model List<Course>
+
+<h2>Списък с курсове</h2>
+<nav class="navbar navbar-expand-lg bg-light" data-bs-theme="light" style="--bs-bg-opacity:0; padding:0;">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item" style="margin:0">
+                    <a class="nav-link"><strong>Сортирай по:</strong></a>
+                </li>
+                <li class="nav-item" style="margin:0">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        @if (ViewBag.SortByName)
+                        {
+                            <a asp-controller="Course" asp-action="Index" asp-route-sortByName="@true" class="btn btn-dark">Име</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Course" asp-action="Index" asp-route-sortByName="@true" class="btn btn-outline-dark">Име</a>
+                        }
+
+                        @if (ViewBag.SortByStartDate)
+                        {
+                            <a asp-controller="Course" asp-action="Index" asp-route-sortByStartDate="@true" class="btn btn-dark">Дата на начало</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Course" asp-action="Index" asp-route-sortByStartDate="@true" class="btn btn-outline-dark">Дата на начало</a>
+                        }
+
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<nav class="navbar navbar-expand-lg bg-light" data-bs-theme="light" style="--bs-bg-opacity:0;">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item" style="margin:0">
+                    <a class="nav-link"><strong>Филтрирай по:</strong></a>
+                </li>
+                <li class="nav-item dropdown" style="margin:0">
+                    @if (ViewBag.TeacherId != 0)
+                    {
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><strong>Учители</strong></a>
+                    }
+                    else
+                    {
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Учители</a>
+                    }
+                    <div class="dropdown-menu" style="">
+                        <h6 class="dropdown-header">Избери Учител</h6>
+                        @foreach (var teacher in ViewBag.Teachers)
+                        {
+                            int index = teacher.TeacherId;
+                            if (ViewBag.TeacherId == index)
+                            {
+                                <a asp-controller="Course" asp-action="Index" asp-route-teacherId="@index" class="dropdown-item"><strong>@teacher.TeacherName</strong></a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Course" asp-action="Index" asp-route-teacherId="@index" class="dropdown-item">@teacher.TeacherName</a>
+                            }
+                        }
+                    </div>
+                </li>
+                <li class="nav-item dropdown" style="margin:0">
+                    @if (ViewBag.AgeGroupId != 0)
+                    {
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><strong>Възрастови групи</strong></a>
+                    }
+                    else
+                    {
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Възрастови групи</a>
+                    }
+                    <div class="dropdown-menu" style="margin:0">
+                        <h6 class="dropdown-header">Избери възрастова група</h6>
+
+                        @foreach (var ageGroup in ViewBag.AgeGroups)
+                        {
+                            int index = int.Parse(ageGroup.Value);
+                            if (ViewBag.AgeGroupId == index)
+                            {
+                                <a asp-controller="Course" asp-action="Index" asp-route-ageGroupId="@int.Parse(ageGroup.Value)" class="dropdown-item"><strong>@ageGroup.Text</strong></a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Course" asp-action="Index" asp-route-ageGroupId="@int.Parse(ageGroup.Value)" class="dropdown-item">@ageGroup.Text</a>
+                            }
+                        }
+                    </div>
+                </li>
+            </ul>
+            <div class="d-flex" style="margin-right:80px">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item" style="margin:0">
+                        <a asp-controller="Course" asp-action="Index" class="btn btn-outline-danger">Премахни филтри</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="card-deck">
+    @foreach (var course in Model)
+    {
+        <div class="card border-light mb-3" style="width: 18rem; margin-bottom: 20px;">
+            <div class="card-body">
+                <div>
+                    <h5 class="card-header">@course.CourseType.Name</h5>
+                </div>
+                <div>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Employee")@*  || User.IsInRole("Teacher") *@)
+                    {
+                        <p class="card-title">Отговорен служител: <strong>@course.Employee.User.FirstName @course.Employee.User.LastName (@course.Employee.User.Email)</strong></p>
+                    }
+                    @{
+                        string dateString = $"{course.StartDate.ToString("MMMM dd, yyyy", new CultureInfo("bg-BG"))} - {course.EndDate.ToString("MMMM dd, yyyy", new CultureInfo("bg-BG"))}";
+                        if (course.StartDate > DateTime.Now)
+                        {
+                            <p class="card-title">@dateString: <strong style="color: orange">Не е започнал</strong></p>
+                        }
+                        else if (course.StartDate < DateTime.Now && course.EndDate > DateTime.Now)
+                        {
+                            <p class="card-title">@dateString: <strong style="color: green">Започнал</strong></p>
+                        }
+                        else if (course.EndDate < DateTime.Now)
+                        {
+                            <p class="card-title">@dateString: <strong style="color: red">Приключил</strong></p>
+                        }
+                    }
+                    <p class="card-title">Възрастова група: @course.AgeGroup.Name</p>
+                    <p class="card-title">Цена: @string.Format("{0:f2} лв.",course.Price)</p>
+                    <p class="card-title">Активно записани деца: @course.CourseRequests.Where(x=>x.Status == RequestStatus.Accepted).Count()</p>
+
+                    @if (course.TeachersCourse != null)
+                    {
+                        <p class="card-text">Учители: <strong>@($"{string.Join(", ", course.TeachersCourse.Select(x => $"{x.Teacher.User.FirstName} {x.Teacher.User.LastName}"))}")</strong></p>
+                    }
+                </div>
+                <div class="card-buttons">
+                    <a asp-controller="Course" asp-action="Info" asp-route-courseId="@course.Id" class="btn btn-outline-info">Информация</a>
+                    @if (User.IsInRole("Admin")
+                   || (User.Identity?.Name == course.Employee.User.Email))
+                    {
+                        <a asp-controller="Course" asp-action="Edit" asp-route-courseId="@course.Id" class="btn btn-warning">Редактиране</a>
+                        <a href="#" onclick="confirmDelete('@course.CourseType.Name', '@course.StartDate.ToString("MMMM dd, yyyy", new CultureInfo("bg-BG")) - @course.EndDate.ToString("MMMM dd, yyyy", new CultureInfo("bg-BG"))', '@course.Id')" class="btn btn-danger">Изтриване</a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div>
+    <ul class="pagination">
+        @for (int i = 1; i <= ViewBag.PageCount; i++)
+        {
+            if (ViewBag.Page == i)
+            {
+                <li class="page-item active">
+                    @{
+                        if (ViewBag.SortByName)
+                        {
+                            <a asp-controller="Course" asp-action="Index" asp-route-page="@i" asp-route-sortByName="@true" class="page-link">@i</a>
+                        }
+                        else if (ViewBag.SortByStartDate)
+                        {
+                            <a asp-controller="Course" asp-action="Index" asp-route-page="@i" asp-route-sortByStartDate="@true" class="page-link">@i</a>
+                        }
+                        else if (ViewBag.AgeGroupId != 0)
+                        {
+                            <a asp-controller="Course" asp-action="Index" asp-route-page="@i" asp-route-ageGroupId="@ViewBag.AgeGroupId" class="page-link">@i</a>
+                        }
+                        else if (ViewBag.TeacherId != 0)
+                        {
+                            <a asp-controller="Course" asp-action="Index" asp-route-page="@i" asp-route-teacherId="@ViewBag.TeacherId" class="page-link">@i</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Course" asp-action="Index" asp-route-page="@i" class="page-link">@i</a>
+                        }
+                    }
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    @{
+                        if (ViewBag.SortByName)
+                        {
+                            <a asp-controller="Course" asp-action="Index" asp-route-page="@i" asp-route-sortByName="@true" class="page-link">@i</a>
+                        }
+                        else if (ViewBag.SortByStartDate)
+                        {
+                            <a asp-controller="Course" asp-action="Index" asp-route-page="@i" asp-route-sortByStartDate="@true" class="page-link">@i</a>
+                        }
+                        else if (ViewBag.AgeGroupId != 0)
+                        {
+                            <a asp-controller="Course" asp-action="Index" asp-route-page="@i" asp-route-ageGroupId="@ViewBag.AgeGroupId" class="page-link">@i</a>
+                        }
+                        else if (ViewBag.TeacherId != 0)
+                        {
+                            <a asp-controller="Course" asp-action="Index" asp-route-page="@i" asp-route-teacherId="@ViewBag.TeacherId" class="page-link">@i</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Course" asp-action="Index" asp-route-page="@i" class="page-link">@i</a>
+                        }
+                    }
+                </li>
+            }
+        }
+
+    </ul>
+</div>
+@if (User.IsInRole("Employee")
+                                                                || User.IsInRole("Admin"))
+{
+    <a asp-controller="Course" asp-action="Add" class="btn btn-primary">Създаване на нов курс</a>
+}
+
+@section Scripts{
+    <script>
+        function confirmDelete(courseType, date, courseId) {
+            var result = confirm("Сигурни ли сте, че искате да изтриете курс " + courseType + " - " + date + "?");
+            if (result) {
+                window.location.href = '/Course/Delete?courseId=' + courseId;
+            }
+        }
+    </script>
+}

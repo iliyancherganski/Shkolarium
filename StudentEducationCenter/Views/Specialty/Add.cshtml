@@ -1,0 +1,12 @@
+﻿@using StudentEducationCenter.ViewModels.Additional;
+@model SpecialtyViewModel
+<h2>Добавяне на специалност</h2>
+
+<form class="d-flex justify-content-center align-items-center flex-column" id="registerForm" method="post" asp-action="Add">
+    <div class="form-group" style="width:500px">
+        <label asp-for="SpecialtyName">Специалност</label>
+        <input asp-for="SpecialtyName" class="form-control" />
+        <span asp-validation-for="SpecialtyName" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-lg btn-primary" style="width:400px; margin-top:30px;">Добави специалност</button>
+</form>

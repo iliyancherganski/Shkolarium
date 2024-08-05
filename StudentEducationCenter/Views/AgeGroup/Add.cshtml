@@ -1,0 +1,13 @@
+﻿@using StudentEducationCenter.ViewModels.Additional;
+@model AgeGroupViewModel
+
+<h2>Добавяне на възрастова група</h2>
+
+<form method="post" asp-action="Add" class="d-flex justify-content-center align-items-center flex-column" id="registerForm">
+    <div class="form-group" style="width:500px">
+        <label asp-for="AgeGroupName">Възрастова група</label>
+        <input asp-for="AgeGroupName" class="form-control" />
+        <span asp-validation-for="AgeGroupName" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-lg btn-primary" style="width:400px; margin-top:30px;">Добави възрастова група</button>
+</form>

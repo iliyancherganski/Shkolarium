@@ -1,0 +1,32 @@
+﻿@using StudentEducationCenter.ViewModels.Child;
+@model AddChildViewModel
+
+<h1>Редактиране на информация за дете</h1>
+
+<form method="post" asp-action="Edit" asp-controller="Child" class="d-flex justify-content-center align-items-center flex-column" id="registerForm">
+
+    <h2>Дете</h2>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="FirstName">Собствено име</label>
+        <input asp-for="FirstName" class="form-control" autocomplete="username" aria-required="true" placeholder="Иван" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="LastName">Фамилно име</label>
+        <input asp-for="LastName" class="form-control" aria-required="true" placeholder="Иванов" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="PhoneNumber">Телефон (на детето)</label>
+        <input asp-for="PhoneNumber" class="form-control" aria-required="true" placeholder="01234556789" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <input type="hidden" asp-for="Id" value="@Model.Id" />
+    <input type="hidden" asp-for="ParentId" value="@Model.ParentId" />
+
+    <button type="submit" class="btn btn-lg btn-primary" style="width:400px; margin-top:30px;">Запазване промените</button>
+</form>
