@@ -1,0 +1,73 @@
+﻿@using StudentEducationCenter.Data.Enums;
+@using StudentEducationCenter.Data.Models;
+@using System.Globalization;
+@model Teacher
+
+<div>
+	<h1>Информация за учител</h1>
+	<h3>Име: @Model.User.FirstName @Model.User.LastName</h3>
+	<p>Телефон: @Model.User.PhoneNumber</p>
+
+	@if (Model.TeacherSpecialties.Count > 0)
+	{
+		<p>Специалности:</p>
+		<ul>
+			@foreach (var specialty in Model.TeacherSpecialties)
+			{
+				<li>@specialty.Specialty.Name</li>
+			}
+		</ul>
+	}
+</div>
+@if (User.IsInRole("Admin") || User.IsInRole("Employee") || User.IsInRole("Teacher"))
+{
+	if (Model.TeacherCourses.Count() > 0)
+	{
+		<h3>Курсове:</h3>
+	}
+	<div class="card-deck">
+		@foreach (var teacherCourse in Model.TeacherCourses)
+		{
+			<div class="card border-light mb-3" style="width: 18rem; margin-bottom: 20px;">
+				<div class="card-body">
+					<div>
+						<h5 class="card-header">@teacherCourse.Course.CourseType.Name</h5>
+					</div>
+					<div>
+						<p class="card-title">@teacherCourse.Course.StartDate.ToString("MMMM dd, yyyy", new CultureInfo("bg-BG")) - @teacherCourse.Course.EndDate.ToString("MMMM dd, yyyy", new CultureInfo("bg-BG"))</p>
+						<p class="card-title">Възрастова група: @teacherCourse.Course.AgeGroup.Name</p>
+						<p class="card-title">Активно записани деца: @teacherCourse.Course.CourseRequests.Where(x=>x.Status == RequestStatus.Accepted).Count()</p>
+						@if (teacherCourse.Course.TeachersCourse != null)
+						{
+							<p class="card-text">Учители: <strong>@($"{string.Join(", ", teacherCourse.Course.TeachersCourse.Select(x => $"{x.Teacher.User.FirstName} {x.Teacher.User.LastName}"))}")</strong></p>
+						}
+					</div>
+					<div class="card-buttons">
+						<a asp-controller="Course" asp-action="Info" asp-route-courseId="@teacherCourse.CourseId" class="btn btn-outline-info">Информация</a>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+}
+@if (User.IsInRole("Admin") || (User.IsInRole("Teacher") && User.Identity?.Name == Model.User.Email))
+{
+	<a asp-controller="User" asp-action="Edit" asp-route-id="@Model.Id" asp-route-role="Teacher" class="btn btn-warning">Редактиране</a>
+	<a href="#" onclick="confirmDelete('@Model.User.FirstName', '@Model.User.LastName', '@Model.Id')" class="btn btn-danger">Изтриване</a>
+}
+<a asp-controller="Teacher" asp-action="Index" class="btn btn-primary">Всички учители</a>
+
+@section Scripts{
+	<script>
+		function confirmDelete(firstName, lastName, teacherId) {
+			// Display a confirmation dialog
+			var result = confirm("Сигурни ли сте, че искате да изтриете всички данни на учителя " + firstName + " " + lastName + "?");
+
+			// If the user clicks "OK," proceed with the deletion
+			if (result) {
+				// Redirect to the Delete action with the childId
+				window.location.href = '/Teacher/Delete?teacherId=' + teacherId;
+			}
+		}
+	</script>
+}

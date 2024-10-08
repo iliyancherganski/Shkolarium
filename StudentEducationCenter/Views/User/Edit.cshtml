@@ -1,0 +1,69 @@
+﻿@using StudentEducationCenter.ViewModels.User;
+@model EditUserViewModel
+
+<h1>Променяне на информация за акаунт</h1>
+
+<form class="d-flex justify-content-center align-items-center flex-column" id="registerForm" id="registerForm" method="post">
+    <input type="hidden" asp-for="Id" value="@Model.Id" />
+    <input type="hidden" asp-for="Role" value="@Model.Role" />
+
+    <h2>Създаване на акаунт</h2>
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="FirstName">Собствено име</label>
+        <input asp-for="FirstName" class="form-control" autocomplete="username" aria-required="true" placeholder="Иван" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="MiddleName">Бащино име</label>
+        <input asp-for="MiddleName" class="form-control" autocomplete="username" aria-required="true" placeholder="Петров" />
+        <span asp-validation-for="MiddleName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="LastName">Фамилия</label>
+        <input asp-for="LastName" class="form-control" autocomplete="username" aria-required="true" placeholder="Иванов" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="CityId">Град</label>
+        <select asp-for="CityId" asp-items="@(ViewBag.Cities)" class="form-select" placeholder="Изберете град">
+        </select>
+        <span asp-validation-for="CityId"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="Address">Адрес</label>
+        <input asp-for="Address" class="form-control" autocomplete="username" aria-required="true" placeholder="ул. 'Христо Ботев 10А" />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label asp-for="PhoneNumber">Тел. за връзка</label>
+        <input asp-for="PhoneNumber" class="form-control" autocomplete="username" aria-required="true" placeholder="08XXXXXXXX" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    @if (Model.Role == "Teacher")
+    {
+        <div class="form-group" style="width:500px">
+            <label>Специалности</label>
+            <div id="dynamicField" class="form-group" style="width:500px">
+                @foreach (var specialty in ViewBag.Specialties)
+                {
+                    bool isChecked = Model.SpecialtyIds.Contains(specialty.SpecialtyId);
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="@specialty.SpecialtyId" name="SpecialtyIds" value="@specialty.SpecialtyId" @(isChecked ? "checked" : "")>
+                        <label class="form-check-label" for="specialty-@specialty.SpecialtyId">@specialty.SpecialtyName</label>
+                    </div>
+                }
+                <span asp-validation-for="SpecialtyIds" class="text-danger"></span>
+            </div>
+        </div>
+    }
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+    <button type="submit" asp-controller="User" asp-action="Edit" class="btn btn-lg btn-primary" style="width:400px">Потвърди промените</button>
+</form>

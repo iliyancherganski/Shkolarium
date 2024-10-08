@@ -8,6 +8,42 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Views\AgeGroup\Add.cshtml" />
+    <None Include="Views\AgeGroup\Index.cshtml" />
+    <None Include="Views\Child\Add.cshtml" />
+    <None Include="Views\Child\Edit.cshtml" />
+    <None Include="Views\Child\Index.cshtml" />
+    <None Include="Views\Child\Info.cshtml" />
+    <None Include="Views\Child\SignInToCourse.cshtml" />
+    <None Include="Views\City\Add.cshtml" />
+    <None Include="Views\City\Index.cshtml" />
+    <None Include="Views\CourseType\Add.cshtml" />
+    <None Include="Views\CourseType\Index.cshtml" />
+    <None Include="Views\Course\Add.cshtml" />
+    <None Include="Views\Course\Edit.cshtml" />
+    <None Include="Views\Course\Index.cshtml" />
+    <None Include="Views\Course\Info.cshtml" />
+    <None Include="Views\Course\Requests.cshtml" />
+    <None Include="Views\Employee\Index.cshtml" />
+    <None Include="Views\Employee\ReassignCourses.cshtml" />
+    <None Include="Views\Home\Index.cshtml" />
+    <None Include="Views\Home\Privacy.cshtml" />
+    <None Include="Views\Parent\Index.cshtml" />
+    <None Include="Views\Shared\Error.cshtml" />
+    <None Include="Views\Shared\_Layout.cshtml" />
+    <None Include="Views\Shared\_LoginPartial.cshtml" />
+    <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <None Include="Views\Specialty\Add.cshtml" />
+    <None Include="Views\Specialty\Index.cshtml" />
+    <None Include="Views\Teacher\Index.cshtml" />
+    <None Include="Views\Teacher\Info.cshtml" />
+    <None Include="Views\User\Edit.cshtml" />
+    <None Include="Views\User\Login.cshtml" />
+    <None Include="Views\User\Register.cshtml" />
+    <None Include="Views\User\RegisterStaff.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.16" />
@@ -25,14 +61,6 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\Course\Add.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\Course\Add.cshtml" />
   </ItemGroup>
 
 </Project>

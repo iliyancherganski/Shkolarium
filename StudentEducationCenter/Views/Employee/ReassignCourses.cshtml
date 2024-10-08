@@ -1,0 +1,55 @@
+﻿@using StudentEducationCenter.ViewModels.Employee
+@using System.Globalization
+@model ReassignCoursesViewModel
+
+<h1>Презаписване на отговорни служители за курсовете на служителя @Model.EmployeeFirstName @Model.EmployeeLastName</h1>
+
+@if (User.IsInRole("Admin"))
+{
+    <form method="post" asp-action="ReassignCourses" asp-controller="Employee">
+        <div class="card-deck">
+            @for (int i = 0; i < Model.coursesEmployees.Count; i++)
+            {
+                var courseEmployee = Model.coursesEmployees[i];
+                <div class="card border-light mb-3" style="width: 18rem; margin-bottom: 20px;">
+                    <div class="card-body">
+                        <div>
+                            <h5 class="card-header">@courseEmployee.CourseTypeName</h5>
+                        </div>
+                        <div>
+                            <p class="card-title">@courseEmployee.CourseStartDateToString - @courseEmployee.CourseEndDateToString</p>
+                            <p class="card-title">@courseEmployee.CourseAgeGroupName</p>
+                            @if (!string.IsNullOrEmpty(courseEmployee.CourseTeachers))
+                            {
+                                <p class="card-text">Учители: <strong>@courseEmployee.CourseTeachers</strong></p>
+                            }
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                @* <label asp-for="@courseEmployee.EmployeeId">Отговорен служител</label>
+                                <select name="coursesEmployees[@i].EmployeeId" asp-items="@(ViewBag.Employees)" class="form-select" placeholder="Избери отговорен служител">
+                                    <option value="">Избери отговорен служител</option>
+                                </select>
+                                <span asp-validation-for="@($"coursesEmployees[{i}].EmployeeId")"></span> *@
+                                <label asp-for="@courseEmployee.EmployeeId">Отговорен служител</label>
+                                <select asp-for="@Model.coursesEmployees[@i].EmployeeId" asp-items="@(ViewBag.Employees)" class="form-select" placeholder="Избери отговорен служител">
+                                </select>
+                                <span asp-validation-for="@courseEmployee.EmployeeId"></span>
+                            </div>
+                        </div>
+                        <input type="hidden" name="coursesEmployees[@i].CourseId" value="@courseEmployee.CourseId" />
+                        <input type="hidden" name="coursesEmployees[@i].CourseTypeName" value="@courseEmployee.CourseTypeName" />
+                        <input type="hidden" name="coursesEmployees[@i].CourseStartDateToString" value="@courseEmployee.CourseStartDateToString" />
+                        <input type="hidden" name="coursesEmployees[@i].CourseEndDateToString" value="@courseEmployee.CourseEndDateToString" />
+                        <input type="hidden" name="coursesEmployees[@i].CourseAgeGroupName" value="@courseEmployee.CourseAgeGroupName" />
+                    </div>
+                </div>
+            }
+        </div>
+        <input type="hidden" name="EmployeeId" value="@Model.EmployeeId" />
+        <input type="hidden" name="EmployeeFirstName" value="@Model.EmployeeFirstName" />
+        <input type="hidden" name="EmployeeLastName" value="@Model.EmployeeLastName" />
+        <button type="submit" class="btn btn-outline-danger">Презаписване на курсовете и изтриване на служителя</button>
+    </form>
+    <a asp-controller="Employee" asp-action="Index" class="btn btn-primary">Отказ и връщане при всички служители</a>
+}

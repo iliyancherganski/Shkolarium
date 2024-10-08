@@ -1,0 +1,87 @@
+﻿@using StudentEducationCenter.Data.Enums;
+@using StudentEducationCenter.Data.Models;
+@using System.Globalization;
+@model Child
+
+<div>
+    <h1>Информация за дете</h1>
+    <h3>Име: @Model.FirstName @Model.LastName</h3>
+    <p>Телефон: @Model.PhoneNumber</p>
+    <p>Родител: @Model.Parent.User.FirstName @Model.Parent.User.LastName</p>
+    <p>Активно регистрирано на @Model.CourseRequests.Where(x=>x.Status == RequestStatus.Accepted).Count() курс/курсове</p>
+</div>
+@if (User.IsInRole("Admin") || (User.IsInRole("Parent") && User.Identity?.Name == Model.Parent.User.Email))
+{
+    if (Model.CourseRequests.Where(x => x.Status == RequestStatus.Accepted).Select(x => x.Course).Count() > 0)
+    {
+        <h3>Курсове:</h3>
+    }
+    <div class="card-deck">
+        @foreach (var courseRequest in Model.CourseRequests)
+        {
+            <div class="card border-light mb-3" style="width: 18rem; margin-bottom: 20px;">
+                <div class="card-body">
+                    <div>
+                        <h5 class="card-header">@courseRequest.Course.CourseType.Name</h5>
+                    </div>
+                    <div>
+                        @{
+                            if (courseRequest.Status == RequestStatus.Pending)
+                            {
+                                <p class="card-title">Статус на детето: <strong style="color: orange">Изчаква се потвърждение</strong></p>
+                            }
+                            else if (courseRequest.Status == RequestStatus.Accepted)
+                            {
+                                <p class="card-title">Статус на детето: <strong style="color: green">Записано</strong></p>
+                            }
+                            else if (courseRequest.Status == RequestStatus.Rejected)
+                            {
+                                <p class="card-title">Статус на детето: <strong style="color: red">Отхвърлена заявка за записване</strong></p>
+                            }
+                        }
+                        <p class="card-title">@courseRequest.Course.StartDate.ToString("MMMM dd, yyyy", new CultureInfo("bg-BG")) - @courseRequest.Course.EndDate.ToString("MMMM dd, yyyy", new CultureInfo("bg-BG"))</p>
+                        <p class="card-title">Възрастова група: @courseRequest.Course.AgeGroup.Name</p>
+                    </div>
+
+                    @if (courseRequest.Course.TeachersCourse != null)
+                    {
+                        <p class="card-text">Учители: <strong>@($"{string.Join(", ", courseRequest.Course.TeachersCourse.Select(x => $"{x.Teacher.User.FirstName} {x.Teacher.User.LastName}"))}")</strong></p>
+                    }
+                    <div>
+                        <a asp-controller="Course" asp-action="Info" asp-route-courseId="@courseRequest.CourseId" class="btn btn-outline-info">Информация</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+@if (User.IsInRole("Admin") || (User.IsInRole("Parent") && User.Identity?.Name == Model.Parent.User.Email))
+{
+    <a asp-controller="Child" asp-action="SignInToCourse" asp-route-childId="@Model.Id" class="btn btn-success">Записване на курс</a>
+    <a asp-controller="Child" asp-action="Edit" asp-route-childId="@Model.Id" class="btn btn-warning">Редактиране</a>
+    <a href="#" onclick="confirmDelete('@Model.FirstName', '@Model.LastName', '@Model.Id')" class="btn btn-danger">Изтриване</a>
+    <a asp-controller="Child" asp-action="Index" class="btn btn-primary">Всички деца</a>
+}
+@if (User.IsInRole("Employee") || User.IsInRole("Teacher"))
+{
+    <button type="button" onclick="goBack()" class="btn btn-secondary">Назад</button>
+}
+
+
+@section Scripts{
+    <script>
+        function confirmDelete(firstName, lastName, childId) {
+            // Display a confirmation dialog
+            var result = confirm("Сигурни ли сте, че искате да изтриете всички данни на детето " + firstName + " " + lastName + "?");
+
+            // If the user clicks "OK," proceed with the deletion
+            if (result) {
+                // Redirect to the Delete action with the childId
+                window.location.href = '/Child/Delete?childId=' + childId;
+            }
+        }
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+}
